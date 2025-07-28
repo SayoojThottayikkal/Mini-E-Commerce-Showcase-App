@@ -1,37 +1,53 @@
 "use client";
 import { useEffect, useState } from "react";
+import FilterPanel from "../components/FilterPanel";
+import ProductCard from "../components/ProductCard";
 import axios from "axios";
-import Link from "next/link";
 
-export default function Home() {
+export default function HomePage() {
   const [products, setProducts] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/products")
-      .then((res) => setProducts(res.data))
-      .catch((err) => console.error(err));
+    axios.get("http://localhost:5000/api/products").then((res) => {
+      setProducts(res.data);
+      setFiltered(res.data);
+    });
   }, []);
 
+  const handleFilter = ({ category, minPrice, maxPrice }) => {
+    let result = [...products];
+
+    if (category) {
+      result = result.filter((item) => item.category === category);
+    }
+    if (minPrice) {
+      result = result.filter((item) => item.price >= parseInt(minPrice));
+    }
+    if (maxPrice) {
+      result = result.filter((item) => item.price <= parseInt(maxPrice));
+    }
+
+    setFiltered(result);
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Products</h1>
+    <div className="max-w-6xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">All Products</h1>
+
+      <button
+        onClick={() => setShowFilters(!showFilters)}
+        className="mb-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        {showFilters ? "Hide Filters" : "Show Filters"}
+      </button>
+
+      {showFilters && <FilterPanel onFilter={handleFilter} />}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {products.map((product) => (
-          <div key={product._id} className="border p-4 rounded shadow">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-40 object-cover mb-2"
-            />
-            <h2 className="text-lg font-semibold">{product.name}</h2>
-            <p className="text-green-600 font-bold">₹{product.price}</p>
-            <Link href={`/product/${product._id}`}>
-              <button className="mt-2 bg-blue-500 text-white px-4 py-1 rounded">
-                View Details
-              </button>
-            </Link>
-          </div>
+        {filtered.map((product) => (
+          <ProductCard key={product._id} product={product} />
         ))}
       </div>
     </div>

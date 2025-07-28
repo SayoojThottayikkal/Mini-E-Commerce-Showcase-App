@@ -31,12 +31,12 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 ">
       <Link href="/" className="text-blue-500 underline">
         Back to Products
       </Link>
 
-      <div className="mt-4 border p-4 rounded shadow">
+      <div className="mt-4 w-1/2 border p-4 rounded-xl shadow-2xl">
         <img
           src={product.image}
           alt={product.name}
