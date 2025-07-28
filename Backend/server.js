@@ -16,7 +16,7 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-app.use("api/products", productRoutes);
+app.use("/api/products", productRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`server running port ${PORT}`);
